@@ -26,13 +26,20 @@ async function run() {
 
         const productCollection = client.db("cardotcom").collection("products")
 
-
+        app.get('/products', async (req, res) => {
+            const query = {}
+            const cursor = productCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
 
     }
     finally {
 
     }
 }
+
+run().catch(console.dir)
 
 
 app.listen(port, (req, res) => {
