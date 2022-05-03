@@ -40,12 +40,19 @@ async function run() {
             res.send(product)
         })
 
-        app.put('/iventory/:id', async (req, res) => {
+        app.get('/myitems', async (req, res) => {
+            const query = {}
+            const cursor = productCollection.find(query)
+            const items = await cursor.toArray()
+            res.send(items)
+        })
+
+        app.patch('/iventory/:id', async (req, res) => {
             const id = req.params.id
             const delivered = req.body
             console.log(delivered);
             const filter = { _id: ObjectId(id) }
-            const options = { upset: true }
+            const options = { upsert: true }
             const updateDoc = {
                 $set: {
                     quantity: delivered.quantity
@@ -61,6 +68,12 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const result = await productCollection.deleteOne(query)
             res.send(result)
+        })
+
+        app.post('/products', async (req, res) => {
+            const product = req.body
+            console.log('product', product);
+            res.send('success')
         })
 
     }
