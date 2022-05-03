@@ -26,6 +26,7 @@ async function run() {
 
         const productCollection = client.db("cardotcom").collection("products")
 
+        // loading products
         app.get('/products', async (req, res) => {
             const query = {}
             const cursor = productCollection.find(query)
@@ -33,6 +34,7 @@ async function run() {
             res.send(result)
         })
 
+        // showing inventory item
         app.get('/inventory/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
@@ -40,6 +42,7 @@ async function run() {
             res.send(product)
         })
 
+        // showing my Items
         app.get('/myitems', async (req, res) => {
             const query = {}
             const cursor = productCollection.find(query)
@@ -47,7 +50,8 @@ async function run() {
             res.send(items)
         })
 
-        app.patch('/iventory/:id', async (req, res) => {
+        // updating the quantity of product
+        app.patch('/inventory/:id', async (req, res) => {
             const id = req.params.id
             const delivered = req.body
             console.log(delivered);
@@ -62,6 +66,7 @@ async function run() {
             res.send(result)
         })
 
+        // deleting the product from manage inventory
         app.delete('/inventory/:id', async (req, res) => {
             const id = req.params.id
             console.log(id);
@@ -70,6 +75,7 @@ async function run() {
             res.send(result)
         })
 
+        // sending products from add products
         app.post('/products', async (req, res) => {
             const product = req.body
             console.log('product', product);
