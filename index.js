@@ -51,7 +51,7 @@ async function run() {
         })
 
         // updating the quantity of product
-        app.patch('/inventory/:id', async (req, res) => {
+        app.put('/inventory/:id', async (req, res) => {
             const id = req.params.id
             const delivered = req.body
             console.log(delivered);
@@ -79,7 +79,7 @@ async function run() {
         app.post('/products', async (req, res) => {
             const product = req.body
             console.log('product', product);
-            res.send('success')
+            res.send(product)
         })
 
     }
