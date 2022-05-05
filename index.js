@@ -44,7 +44,8 @@ async function run() {
 
         // showing my Items
         app.get('/myitems', async (req, res) => {
-            const query = {}
+            const email = req.query.email
+            const query = { email: email }
             const cursor = productCollection.find(query)
             const items = await cursor.toArray()
             res.send(items)
@@ -78,8 +79,8 @@ async function run() {
         // sending products from add products
         app.post('/products', async (req, res) => {
             const product = req.body
-            console.log('product', product);
-            res.send(product)
+            const result = await productCollection.insertOne(product)
+            res.send(result)
         })
 
     }
