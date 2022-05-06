@@ -98,6 +98,30 @@ async function run() {
             res.send(result)
         })
 
+        const brandCollection = client.db("cardotcom").collection("brands")
+
+        app.get('/brands', async (req, res) => {
+            const query = {}
+            const cursor = brandCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        const reviewCollection = client.db("cardotcom").collection("reviews")
+
+        app.get('/reviews', async (req, res) => {
+            const query = {}
+            const cursor = reviewCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        app.post('/reviews', async (req, res) => {
+            const review = req.body
+            const result = await reviewCollection.insertOne(review)
+            res.send(result)
+        })
+
     }
     finally {
 
