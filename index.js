@@ -1,6 +1,8 @@
 const express = require('express');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
+require('dotenv').config()
+const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000
 const app = express()
 
@@ -8,8 +10,21 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-// products
-// hJ3gtXuVbcuA0Ulr
+function verifyJWT(req, res, next) {
+    const authHeader = req.headers.authorization
+    if (!authHeader) {
+        return res.status(401).send({ message: 'unauthorized access' })
+    }
+    const token = authHeader.split(' ')[1]
+    jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({ message: 'Forbidden accesss' })
+        }
+        console.log('decoded', decoded);
+        req.decoded = decoded
+        next()
+    })
+}
 
 app.get('/', (req, res) => {
     res.send('All cars are sold! :(')
@@ -25,6 +40,14 @@ async function run() {
         await client.connect()
 
         const productCollection = client.db("cardotcom").collection("products")
+
+        app.post('/login', async (req, res) => {
+            const user = req.body
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, {
+                expiresIn: '1d'
+            })
+            res.send({ accessToken })
+        })
 
         // loading products
         app.get('/products', async (req, res) => {
@@ -43,12 +66,18 @@ async function run() {
         })
 
         // showing my Items
-        app.get('/myitems', async (req, res) => {
+        app.get('/myitems', verifyJWT, async (req, res) => {
+            const decodedEmail = req.decoded.email
             const email = req.query.email
-            const query = { email: email }
-            const cursor = productCollection.find(query)
-            const items = await cursor.toArray()
-            res.send(items)
+            if (email === decodedEmail) {
+                const query = { email: email }
+                const cursor = productCollection.find(query)
+                const items = await cursor.toArray()
+                res.send(items)
+            }
+            else {
+                res.status(403).send({ message: 'forbidden access' })
+            }
         })
 
         // updating the quantity of product
