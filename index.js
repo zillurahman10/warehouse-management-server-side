@@ -80,6 +80,14 @@ async function run() {
             }
         })
 
+        app.delete('/myitems', async (req, res) => {
+            const email = req.query.email
+            console.log(email);
+            const query = { email: email }
+            const result = await productCollection.deleteOne(query)
+            res.send(result)
+        })
+
         // updating the quantity of product
         app.put('/inventory/:id', async (req, res) => {
             const id = req.params.id
