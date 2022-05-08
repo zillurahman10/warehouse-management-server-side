@@ -49,6 +49,10 @@ async function run() {
             res.send({ accessToken })
         })
 
+        app.get('/test', (req, res) => {
+            console.log('helloo');
+        })
+
         // loading products
         app.get('/products', async (req, res) => {
             const query = {}
@@ -92,22 +96,22 @@ async function run() {
         app.put('/inventory/:id', async (req, res) => {
             const id = req.params.id
             const delivered = req.body
-            console.log(delivered);
+            console.log(delivered, id);
             const filter = { _id: ObjectId(id) }
             const options = { upsert: true }
             const updateDoc = {
                 $set: {
-                    quantity: delivered.quantity
+                    quantity: delivered.againUpdatedQuantity
                 },
             };
             const result = await productCollection.updateOne(filter, updateDoc, options)
+            console.log(result);
             res.send(result)
         })
 
         // deleting the product from manage inventory
         app.delete('/inventory/:id', async (req, res) => {
             const id = req.params.id
-            console.log(id);
             const query = { _id: ObjectId(id) }
             const result = await productCollection.deleteOne(query)
             res.send(result)
