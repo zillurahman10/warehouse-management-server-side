@@ -27,7 +27,7 @@ function verifyJWT(req, res, next) {
 }
 
 app.get('/', (req, res) => {
-    res.send('All cars are sold! :(')
+    res.send('Welcome to Car.com api!')
 })
 
 
